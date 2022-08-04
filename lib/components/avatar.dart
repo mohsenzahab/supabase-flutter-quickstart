@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_quickstart/utils/constants.dart';
@@ -33,10 +36,21 @@ class _AvatarState extends State<Avatar> {
             ),
           )
         else
-          Image.network(
-            widget.imageUrl!,
+          CachedNetworkImage(
+            imageUrl: widget.imageUrl!,
             width: 150,
             height: 150,
+            errorWidget: (context, url, error) {
+              log(url);
+              var u = '';
+              u = supabase.storage.from('avatars').url;
+              log(u);
+
+              return Text(
+                error.toString(),
+                style: TextStyle(color: Colors.red),
+              );
+            },
             fit: BoxFit.cover,
           ),
         ElevatedButton(
@@ -74,7 +88,7 @@ class _AvatarState extends State<Avatar> {
       return;
     }
     final imageUrlResponse =
-        supabase.storage.from('avatars').getPublicUrl(filePath);
+        supabase.storage.from('avatars').getPublicUrl('$filePath');
     widget.onUpload(imageUrlResponse.data!);
   }
 }
