@@ -21,6 +21,7 @@ class _LoginPageState extends AuthState<LoginPage> {
     });
     final response = await supabase.auth.signIn(
         email: _emailController.text,
+        provider: Provider.google,
         options: AuthOptions(
             redirectTo: kIsWeb
                 ? null
